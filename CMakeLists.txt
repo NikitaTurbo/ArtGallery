@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(artGallery)
 
-SET(GCC_COVERAGE_COMPILE_FLAGS "-fsanitize=address -g")
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
-
 set(SOURCE_FILES
     sources/components/point/point.cpp
     sources/components/edge/edge.cpp
