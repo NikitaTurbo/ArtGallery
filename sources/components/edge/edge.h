@@ -10,9 +10,8 @@
 
 class edge { // edge
 public:
-  point p0;
-  point p1;
-  edge(point p0=point(), point p1=point());
+  point begin, end;
+  edge(point begin=point(), point end=point());
 
   bool get_intersection(const edge &line) const;
   bool pixel_on(const point &pixel) const;
