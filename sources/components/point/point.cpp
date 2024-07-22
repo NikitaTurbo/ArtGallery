@@ -35,7 +35,7 @@ bool point::operator>(const point &p) const {
 bool point::operator<(const point &p) const {
 	if (f == 1) {
 		return real_dist() < p.real_dist();
-	} else {
+	} else {	
 		return dist() < p.dist();
 	}
 }
@@ -51,6 +51,13 @@ bool point::operator==(const point &p) const {
 		return real_dist() == p.real_dist();
 	} else {
 		return dist() == p.dist();
+	}
+}
+bool point::operator!=(const point &p) const {
+	if (f == 1) {
+		return real_dist() != p.real_dist();
+	} else {
+		return dist() != p.dist();
 	}
 }
 bool point::operator>=(const point &p) const {

@@ -1,3 +1,4 @@
+#include <boost/geometry/algorithms/detail/covered_by/interface.hpp>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -6,22 +7,14 @@
 #include <iostream>
 
 #include <boost/geometry.hpp>
-#include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include "mpolygon.h"
 #include "../edge/edge.h"
 #include "../point/point.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
-typedef boost::geometry::model::polygon<point_type> polygon_type;
-typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> polygon;
+typedef boost::geometry::model::polygon<point_type> polygon;
+typedef boost::geometry::model::segment<point_type> segment;
 
 mpolygon::mpolygon(std::vector<point> points) : points(points) {
 	size = points.size();
@@ -33,7 +26,7 @@ void mpolygon::add(point p) {
 	sum += p.x + p.y;
 	++size;
 }
-std::string mpolygon::to_str() {
+std::string mpolygon::to_polygon() {
 	std::string str = "POLYGON((";
 
 	for (long long i = 0; i < size; ++i) str += std::to_string(points[i].x) + ' ' + std::to_string(points[i].y) + ',';
@@ -45,13 +38,13 @@ std::string mpolygon::to_str() {
 }
 double mpolygon::area() {
 	polygon poly;
-	boost::geometry::read_wkt(to_str(), poly);
+	boost::geometry::read_wkt(to_polygon(), poly);
 
 	return boost::geometry::area(poly);
 }
 polygon mpolygon::polygon_area() {
 	polygon poly;
-	boost::geometry::read_wkt(to_str(), poly);
+	boost::geometry::read_wkt(to_polygon(), poly);
 	return poly;
 }
 edge mpolygon::get_edge(long long num) {
@@ -59,6 +52,7 @@ edge mpolygon::get_edge(long long num) {
 }
 bool mpolygon::point_in(point p) {
 	point_type p2(p.x, p.y);
+	
 	return boost::geometry::covered_by(p2, polygon_area());
 }
 bool mpolygon::operator>(const mpolygon &pol2) const {

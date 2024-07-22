@@ -6,21 +6,10 @@
 #include <vector>
 #include <boost/geometry.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include "../edge/edge.h"
 #include "../point/point.h"
 #include "../mpolygon/mpolygon.h"
-
-// typedef boost::geometry::model::d2::point_xy<double> point_type;
-// typedef boost::geometry::model::polygon<point_type> polygon_type;
-// typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> polygon;
 
 double random_f();
 
@@ -36,7 +25,7 @@ public:
   double x, y;
 
   guard(double x=0.0, double y=0.0, long long stc=1);
-  bool operator<(const guard &g2) const;
+  bool operator<(const guard &g) const;
   mpolygon get_visible_zone();
   void set_visible_zone(mpolygon poly);
 

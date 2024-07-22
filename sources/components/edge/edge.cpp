@@ -3,44 +3,38 @@
 #include <ostream>
 #include <iostream>
 
+#include <boost/geometry.hpp>
+
 #include "edge.h"
 #include "../point/point.h"
 
+typedef boost::geometry::model::d2::point_xy<double> point_type;
+typedef boost::geometry::model::polygon<point_type> polygon;
+typedef boost::geometry::model::segment<point_type> segment;
+
 edge::edge(point begin, point end) : begin(begin), end(end) {}
 
-bool edge::get_intersection(const edge &line) const {
-	double cat1_x = end.x - begin.x;
-	double cat1_y = end.y - begin.y;
-	double cat2_x = line.end.x - line.begin.x;
-	double cat2_y = line.end.y - line.begin.y;
-	double prod1 = (cat1_x * (line.begin.y - begin.y)) - ((line.begin.x - begin.x) * cat1_y);
-	double prod2 = (cat1_x * (line.end.y - begin.y)) - ((line.end.x - begin.x) * cat1_y);
-	if (((prod1 < 0) && (prod2 < 0)) || ((prod1 > 0) && (prod2 > 0))) return false;
+bool edge::get_intersection(const edge &line) const { // is edges get intersection or no
+	point_type this_begin(begin.x, begin.y), this_end(end.x, end.y);
+	point_type line_begin(line.begin.x, line.begin.y), line_end(line.end.x, line.end.y);
 
-	prod1 = (cat2_x * (begin.y - line.begin.y)) - ((begin.x - line.begin.x) * cat2_y);
-	prod2 = (cat2_x * (end.y - line.begin.y)) - ((end.x - line.begin.x) * cat2_y);
-	if (((prod1 < 0) && (prod2 < 0)) || ((prod1 > 0) && (prod2 > 0))) return false;
-
-	return true;
+	return boost::geometry::intersects(segment(this_begin, this_end), segment(line_begin, line_end));
 }
-bool edge::pixel_on(const point &pixel) const { 
-	return (std::round(((begin.y - end.y) * pixel.x + (end.x - begin.x) * pixel.y + (begin.x * end.y - end.x * begin.y))) == 0);
+bool edge::point_on(const point &check_point) const {
+	point_type check_point_type(check_point.x, check_point.y);
+	point_type this_begin(begin.x, begin.y), this_end(end.x, end.y);
+	
+	return (boost::geometry::distance(check_point_type, this_begin) + boost::geometry::distance(check_point_type, this_end)) == boost::geometry::distance(this_begin, this_end);
 }
-bool edge::pixel_on2(const point &pixel) const { // pixel on line
-	edge self;
-	self.begin = begin;
-	self.end = end;
-	return (self.pixel_on(pixel) && (((pixel.x <= begin.x && pixel.x >= end.x) || (pixel.x >= begin.x && pixel.x <= end.x)) && ((pixel.y <= begin.y && pixel.y >= end.y) || (pixel.y >= begin.y && pixel.y <= end.y))));
-}
-point edge::operator*(const edge &e2) const { // intersection
-	edge e1 = *this;
-	double u = ((e2.end.x - e2.begin.x) * (e1.begin.y - e2.begin.y) - (e2.end.y - e2.begin.y) * (e1.begin.x - e2.begin.x)) / ((e2.end.y - e2.begin.y) * (e1.end.x - e1.begin.x) - (e2.end.x - e2.begin.x) * (e1.end.y - e1.begin.y));
+point edge::operator|(const edge &line) const { // point of intersection
+	std::vector<point_type> intersection_points;
 
-	point ans;
-	ans.x = e1.begin.x + u * (e1.end.x - e1.begin.x);
-	ans.y = e1.begin.y + u * (e1.end.y - e1.begin.y);
+	point_type this_begin(begin.x, begin.y), this_end(end.x, end.y);
+	point_type line_begin(line.begin.x, line.begin.y), line_end(line.end.x, line.end.y);
 
-	return ans;
+	boost::geometry::intersection(segment(this_begin, this_end), segment(line_begin, line_end), intersection_points);
+	
+	return point(intersection_points[0].x(), intersection_points[0].y());
 }
 
 std::ostream &operator<<(std::ostream &out, edge e) {

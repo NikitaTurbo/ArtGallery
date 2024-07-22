@@ -6,6 +6,8 @@
 #include <ostream>
 #include <iostream>
 
+#include <boost/geometry.hpp>
+
 #include "../point/point.h"
 
 class edge { // edge
@@ -14,9 +16,8 @@ public:
   edge(point begin=point(), point end=point());
 
   bool get_intersection(const edge &line) const;
-  bool pixel_on(const point &pixel) const;
-  bool pixel_on2(const point &pixel) const;
-  point operator*(const edge &e2) const;
+  bool point_on(const point &check_point) const;
+  point operator|(const edge &line) const;
 
   friend std::ostream &operator<<(std::ostream &out, edge e);
   friend std::istream &operator>>(std::istream &inp, edge &e);

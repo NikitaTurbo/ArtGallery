@@ -8,20 +8,13 @@
 
 #include <boost/geometry.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include "../edge/edge.h"
 #include "../point/point.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
-typedef boost::geometry::model::polygon<point_type> polygon_type;
-typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> polygon;
+typedef boost::geometry::model::polygon<point_type> polygon;
+typedef boost::geometry::model::segment<point_type> segment;
 
 class mpolygon {
 public:
@@ -31,7 +24,7 @@ public:
 
   mpolygon(std::vector<point> points = std::vector<point>(0, point()));
   void add(point p);
-  std::string to_str();
+  std::string to_polygon();
   double area();
   polygon polygon_area();
   edge get_edge(long long num);

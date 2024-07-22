@@ -13,13 +13,6 @@
 
 #include <boost/geometry.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include <SFML/Graphics.hpp>
 

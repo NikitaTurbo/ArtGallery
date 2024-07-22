@@ -1,27 +1,13 @@
-#include <map>
-#include <set>
 #include <cmath>
-#include <string>
 #include <vector>
 #include <istream>
-#include <ostream>
 #include <iostream>
-#include <algorithm>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include "team.h"
-#include "../edge/edge.h"
 #include "../guard/guard.h"
-#include "../point/point.h"
 #include "../mpolygon/mpolygon.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
@@ -52,14 +38,14 @@ void team::calc_area() { // calc team visible zone/s
 	visible_zones.clear();
 	for (long long i = 0; i < size; ++i) {
 		polygon poly;
-		boost::geometry::read_wkt(guards[i].get_visible_zone().to_str(), poly);
+		boost::geometry::read_wkt(guards[i].get_visible_zone().to_polygon(), poly);
 
 		std::vector<polygon> upd_visible_zones;
 		for (long long j = 0; j < visible_zones.size(); ++j) {
 			std::vector<polygon> poly_union;
 
 			boost::geometry::union_(poly, visible_zones[j], poly_union);
-			
+
 			if (poly_union.size() == 1) { // visible guard zone & past visible zone/s have union
 				poly = poly_union[0];
 			} else upd_visible_zones.push_back(visible_zones[j]);

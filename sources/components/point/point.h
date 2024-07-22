@@ -15,7 +15,7 @@ private:
 public:
   double x, y;
 
-  point(double x=0.0, double y=0.0, double zero_x=0.0, double zero_y=0.0, long long f=0);
+  point(double x=0.0, double y=0.0, double zero_x=0.0, double zero_y=0.0, long long f=1);
 
   point operator~();
   point real() const;
@@ -25,6 +25,7 @@ public:
   bool operator<(const point &p) const;
   bool operator<=(const point &p) const;
   bool operator==(const point &p) const;
+  bool operator!=(const point &p) const;
   bool operator>=(const point &p) const;
 
   void zero(double x=0.0, double y=0.0);

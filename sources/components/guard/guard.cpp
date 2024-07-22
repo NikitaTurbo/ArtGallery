@@ -1,7 +1,4 @@
-#include <map>
-#include <set>
 #include <cmath>
-#include <string>
 #include <vector>
 #include <istream>
 #include <ostream>
@@ -9,13 +6,6 @@
 #include <algorithm>
 
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include "guard.h"
 #include "../edge/edge.h"
@@ -23,98 +13,91 @@
 #include "../mpolygon/mpolygon.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
-typedef boost::geometry::model::polygon<point_type> polygon_type;
-typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> polygon;
+typedef boost::geometry::model::polygon<point_type> polygon;
+typedef boost::geometry::model::segment<point_type> segment;
 
 double random_f() {
     double x = (std::rand() % 19999) - 1e4;
     double y = (std::rand() % 19999) - 1e4;
 
-    return x + y / 1e4;
+    return (x + y) / 1e4;
 }
 
-std::set<std::pair<double, double>> save_be;
-std::map<std::pair<double, double>, mpolygon> save;
 mpolygon gallery; // gallery
 
 guard::guard(double x, double y, long long stc) : x(x), y(y) {
-	if (stc == 1) {
-		if (save_be.find({x, y}) != save_be.end()) visible_zone = save[{x, y}];
-		else {
-			edge edges;
-			std::vector<std::vector<point>> points(gallery.size, std::vector<point> (0, point()));
+	/* Visibility point algorithm:
+		Step 1: Draw rays and their intersections.
+		Step 2: Frind cross/touch points of intersections.
+		Step 3: Sort intersections on a ray by their distances from the guard. Find visible/invisible points of sorted intersections.
+		Step 4: Sort visible points by all edges of polygon. 
+	*/	
+	std::vector<point> visible_points;
+    for (long long ind_corner = 0; ind_corner < gallery.size; ++ind_corner) {
+    	std::vector<std::pair<point, bool>> ray;
+    	point corner = gallery[ind_corner];
+		edge visible = edge(point(x, y), point(x + (corner.x - x) * 1e4, y + (corner.y - y) * 1e4));
+		edge to_corner = edge(point(x, y), corner);
 
-			for (long long i = 0; i < gallery.size; ++i) {
-				std::vector<std::pair<point, long long>> now_points;
-				edges = edge(point(x, y), point(x + (gallery[i].x - x) * 1e4, y + (gallery[i].y - y) * 1e4));
-				long long jj = (gallery.size - 1);
+		long long ind_previous = (gallery.size - 1);
+		for (long long ind_now = 0; ind_now < gallery.size; ++ind_now) { // Find intersections from guard to all corners & all edges of polygon
+			edge now = edge(gallery[ind_previous], gallery[ind_now]);
 
-				for (long long ii = 0; ii < gallery.size; ++ii) {
-					if (edges.get_intersection(edge(gallery[jj], gallery[ii]))) {
-						if (((edges * edge(gallery[jj], gallery[ii])).x / (edges * edge(gallery[jj], gallery[ii])).x == 1) || ((edges * edge(gallery[jj], gallery[ii])).x == 0)) {
-							point p = (edges * edge(gallery[jj], gallery[ii]));
+			if (visible.get_intersection(now)) {
+				point intersection = visible | now;
 
-							now_points.push_back({~p, jj});
-							now_points[(now_points.size() - 1)].first.flag(1);
-							now_points[(now_points.size() - 1)].first.zero(x, y);
-						} else {
-							now_points.push_back({gallery[jj], jj});
-							now_points[(now_points.size() - 1)].first.flag(1);
-							now_points[(now_points.size() - 1)].first.zero(x, y);
+				bool is_cross = !gallery.point_in(point(intersection.x + (corner.x - x) * 2e-2, intersection.y + (corner.y - y) * 2e-2)); // Check cross/touch point
 
-							now_points.push_back({gallery[ii], jj});
-							now_points[(now_points.size() - 1)].first.flag(1);
-							now_points[(now_points.size() - 1)].first.zero(x, y);
-						}
-					}
-					jj = ii;
-				}
-				std::sort(now_points.begin(), now_points.end());
-				if (now_points.size() > 0) {
-					now_points[0].first.zero(gallery[now_points[0].second].x, gallery[now_points[0].second].y);
-					points[now_points[0].second].push_back(now_points[0].first);
-				}
-
-				for (long long ii = 1; ii < now_points.size(); ++ii) {
-					if (!gallery.point_in(now_points[ii - 1].first.mid(now_points[ii].first))) break;
-
-					now_points[ii].first.zero(gallery[now_points[ii].second].x, gallery[now_points[ii].second].y);
-					points[now_points[ii].second].push_back(~now_points[ii].first);
-				}
+				ray.push_back({intersection, is_cross});
 			}
 
-			std::vector<point> new_points;
-			long long b = 0;
-			for (long long i = 0; i < gallery.size; ++i) {
-				std::sort(points[i].begin(), points[i].end());
-
-				for (long long j = 0; j < points[i].size(); ++j) {
-					~points[i][j];
-					if (new_points.size() == 0) new_points.push_back(points[i][j]);
-					else {
-						if ((points[i][j].x != new_points[new_points.size() - 1].x) || (points[i][j].y != new_points[new_points.size() - 1].y)) {
-							if ((points[i][j].x == new_points[0].x) && (points[i][j].y == new_points[0].y)) {
-								b = 1;
-								break;
-							}
-
-							new_points.push_back(~points[i][j]);
-						}
-					}
-				}
-
-				if (b == 1) break;
-			}
-
-			visible_zone = mpolygon(new_points);
-
-			save_be.insert({x, y});
-			save[{x, y}] = visible_zone;
+			ind_previous = ind_now;
 		}
+
+		if (ray.size() > 0) {
+			point_type guard(x, y);
+			std::sort(ray.begin(), ray.end(), [&guard](const std::pair<point, bool> &a, const std::pair<point, bool> &b) { // Sort ray points of their distance to guard
+				point_type point_a(a.first.x, a.first.y), point_b(b.first.x, b.first.y);
+
+    		    return boost::geometry::distance(guard, point_a) < boost::geometry::distance(guard, point_b);
+			});
+			
+			bool is_cross = false;
+			for (const auto &ray_point : ray) { // Find in ray visible points
+				if (!is_cross) visible_points.push_back(ray_point.first);
+				else break;
+				
+				is_cross = ray_point.second;
+			}
+		}
+    }
+    
+    std::vector<point> polygon_points;  // Sort by all edges of polygon
+    long long ind_previous = (gallery.size - 1);
+	for (long long ind_now = 0; ind_now < gallery.size; ++ind_now) {
+		edge now = edge(gallery[ind_previous], gallery[ind_now]);
+
+		std::vector<point> on_edge_points;
+		for (const auto &visible_point : visible_points) {
+			if (now.point_on(visible_point)) on_edge_points.push_back(visible_point);
+		}
+		
+		point_type left_corner(gallery[ind_previous].x, gallery[ind_previous].y);
+		std::sort(on_edge_points.begin(), on_edge_points.end(), [&left_corner](const point &a, const point &b) {
+			point_type point_a(a.x, a.y), point_b(b.x, b.y);
+
+    		return boost::geometry::distance(left_corner, point_a) < boost::geometry::distance(left_corner, point_b);
+		});
+		
+		for (const auto &on_edge_point : on_edge_points) polygon_points.push_back(on_edge_point);
+		
+		ind_previous = ind_now;
 	}
+	
+	visible_zone = mpolygon(polygon_points);
 }
-bool guard::operator<(const guard &g2) const {
-	return ((x + y) < (g2.x + g2.y));
+bool guard::operator<(const guard &g) const {
+	return ((x + y) < (g.x + g.y));
 }
 mpolygon guard::get_visible_zone() {
 	return visible_zone;

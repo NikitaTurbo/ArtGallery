@@ -1,27 +1,13 @@
-#include <map>
-#include <set>
 #include <cmath>
-#include <string>
 #include <vector>
-#include <istream>
-#include <ostream>
-#include <iostream>
 #include <unistd.h>
 #include <algorithm>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include <SFML/Graphics.hpp>
 
-#include "../edge/edge.h"
 #include "../team/team.h"
 #include "../guard/guard.h"
 #include "../point/point.h"
@@ -34,10 +20,10 @@ typedef boost::geometry::model::polygon<point_type> polygon_type;
 typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> polygon;
 
 point random_point() { // random point of gallery
-  point p1, p2, p3;
+	point p1, p2, p3;
 	std::vector<point> g;
-  double alpha, beta, gyama, new_x, new_y;
-  long long  rand_vertex;
+	double alpha, beta, gyama, new_x, new_y;
+	long long  rand_vertex;
 	long long number_of_vertex = gallery.points.size();
 	do {
 		rand_vertex = std::rand() % (number_of_vertex - 1);
@@ -60,11 +46,6 @@ long long random_of_range(long long l, long long r) {
 	return l + (std::rand() % (r - l + 1));
 }
 
-bool cmp(team a, team b) {
-	if (a.fit == b.fit) return a.size > b.size;
-	return a.fit < b.fit;
-}
-
 population::population(long long n, long long m) : n(n), m(m) {
 	for (long long _i = 0; _i < m; ++_i) {
 		team t;
@@ -77,7 +58,10 @@ population::population(long long n, long long m) : n(n), m(m) {
 	}
 }
 void population::update() {
-	std::sort(populate.begin(), populate.end(), cmp);
+	std::sort(populate.begin(), populate.end(), [](team a, team b) {
+		if (a.fit == b.fit) return a.size > b.size;
+		return a.fit < b.fit;
+	});
 
 	team bmx = populate[m - 1]; // best max fit
 	team smx = populate[m - 2]; // 2 best max fit

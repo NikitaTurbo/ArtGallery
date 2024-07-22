@@ -16,5 +16,12 @@ find_package(SFML COMPONENTS graphics REQUIRED)
 
 include_directories(${SFML_INCLUDE_DIR})
 
+# Ignore BOOST deprecated headers
+add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
+add_definitions("-DBOOST_BIND_GLOBAL_PLACEHOLDERS")
+
+# Ignore warnings
+add_definitions("-w")
+
 add_executable(artGallery ${SOURCE_FILES})
 target_link_libraries(artGallery PRIVATE -lsfml-graphics -lsfml-window -lsfml-system)

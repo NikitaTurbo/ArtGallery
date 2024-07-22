@@ -1,28 +1,13 @@
-#include <map>
-#include <set>
 #include <cmath>
-#include <string>
 #include <vector>
-#include <istream>
-#include <ostream>
-#include <iostream>
 #include <unistd.h>
-#include <algorithm>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/io/wkt/wkt.hpp>
-#include <boost/geometry/algorithms/union.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
-#include <boost/geometry/strategies/cartesian/point_in_poly_franklin.hpp>
 
 #include <SFML/Graphics.hpp>
 
 #include "paper.h"
-#include "../../edge/edge.h"
 #include "../../team/team.h"
 #include "../../guard/guard.h"
 #include "../../point/point.h"
@@ -66,7 +51,7 @@ void paper::read_gallery() {
 			}
 
 			if (event.type == sf::Event::MouseButtonPressed && !isEnter) {
-				if (event.key.code == sf::Mouse::Left) {
+				if (event.mouseButton.button == sf::Mouse::Left) {
 					sf::Vector2i cursorPos = sf::Mouse::getPosition(window);
 
 					room.append(sf::Vector2f(cursorPos.x, cursorPos.y));
@@ -79,17 +64,17 @@ void paper::read_gallery() {
 		window.clear(sf::Color::White);
 
 		window.draw(room);
-		window.display();	
+		window.display();
 	}
 
 	for (long long i = 0; i < ind; ++i) gallery.add(point(read_x(room[i].position.x), read_y(room[i].position.y, window.getSize().y)));
 }
 void paper::draw_gallery() {
 	for (long long i = 0; i < gallery.size; ++i) {
-		room.append(sf::Vector2f(draw_x(gallery[i].x), draw_y(gallery[i].y, window.getSize().y))); 
+		room.append(sf::Vector2f(draw_x(gallery[i].x), draw_y(gallery[i].y, window.getSize().y)));
 		room[i].color = sf::Color::Black;
 	}
-	room.append(room[0]); 
+	room.append(room[0]);
 
 	window.clear(sf::Color::White);
 
@@ -99,7 +84,7 @@ void paper::draw_gallery() {
 team paper::read_team() {
 	long long ind = 0;
 	team t;
-  bool isEnter = false;
+	bool isEnter = false;
 	points.clear();
 
 	while (!isEnter) {
@@ -112,7 +97,7 @@ team paper::read_team() {
 			}
 
 			if (event.type == sf::Event::MouseButtonPressed && !isEnter) {
-				if (event.key.code == sf::Mouse::Left) {
+				if (event.mouseButton.button == sf::Mouse::Left) {
 					sf::Vector2i cursorPos = sf::Mouse::getPosition(window);
 					t.add(guard(read_x(cursorPos.x), read_y(cursorPos.y, window.getSize().y), 1));
 
@@ -129,7 +114,7 @@ team paper::read_team() {
 
 		window.draw(room);
 		for (const auto &circle : points) window.draw(circle);
-		window.display();	
+		window.display();
 	}
 
 	return t;
@@ -163,13 +148,13 @@ void paper::draw_area(team &t) {
 	}
 
 	while (window.isOpen()) {
-    sf::Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) window.close();
-    }
+    	sf::Event event;
+    	while (window.pollEvent(event)) {
+     		if (event.type == sf::Event::Closed) window.close();
+      	}
 
-    window.clear(sf::Color::White);
-    
+      	window.clear(sf::Color::White);
+
 		window.draw(room);
 		for (const auto &circle : points) window.draw(circle);
 		for (const auto &convex : polygons) window.draw(convex);
