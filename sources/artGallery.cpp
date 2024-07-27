@@ -16,7 +16,7 @@ typedef boost::geometry::model::polygon<point_type> polygon_type;
 typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<double>> polygon;
 
 int main() {
-	// freopen("input.txt", "r", stdin);
+	freopen("input.txt", "r", stdin);
 	paper w;
 	w.read_gallery();
 	team t = w.read_team();

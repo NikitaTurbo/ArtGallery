@@ -15,7 +15,7 @@
 typedef boost::geometry::model::d2::point_xy<double> point_type;
 typedef boost::geometry::model::polygon<point_type> polygon;
 typedef boost::geometry::model::segment<point_type> segment;
-
+	
 double random_f() {
     double x = (std::rand() % 19999) - 1e4;
     double y = (std::rand() % 19999) - 1e4;
@@ -42,12 +42,12 @@ guard::guard(double x, double y, long long stc) : x(x), y(y) {
 		long long ind_previous = (gallery.size - 1);
 		for (long long ind_now = 0; ind_now < gallery.size; ++ind_now) { // Find intersections from guard to all corners & all edges of polygon
 			edge now = edge(gallery[ind_previous], gallery[ind_now]);
-
+					
 			if (visible.get_intersection(now)) {
 				point intersection = visible | now;
 
 				bool is_cross = !gallery.point_in(point(intersection.x + (corner.x - x) * 2e-2, intersection.y + (corner.y - y) * 2e-2)); // Check cross/touch point
-
+				
 				ray.push_back({intersection, is_cross});
 			}
 
