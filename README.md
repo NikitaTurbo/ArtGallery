@@ -1,1 +1,1 @@
-# ArtGallery
+# AGP (Art Gallery Problem)

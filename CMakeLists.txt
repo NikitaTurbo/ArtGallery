@@ -1,27 +1,47 @@
-cmake_minimum_required(VERSION 3.5)
-project(artGallery)
+# CMake config
+cmake_minimum_required(VERSION 3.10)
+project(AGP) # Art Gallery Problem
 
-set(SOURCE_FILES
-    sources/components/point/point.cpp
-    sources/components/edge/edge.cpp
-    sources/components/mpolygon/mpolygon.cpp
-    sources/components/guard/guard.cpp
-    sources/components/team/team.cpp
-    sources/components/visualize/paper/paper.cpp
-    sources/components/genetic_algorithm/genetic_algorithm.cpp
-    sources/artGallery.cpp
+# Set project directories
+set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+set(INCLUDE_DIR ${PROJECT_ROOT}/include)
+set(LIB_DIR ${PROJECT_ROOT}/lib)
+set(SRC_DIR ${PROJECT_ROOT}/src)
+
+# Include directories
+include_directories(
+	${INCLUDE_DIR}
+	${LIB_DIR}
 )
 
-find_package(SFML COMPONENTS graphics REQUIRED)
+# Link directories
+link_directories(
+	${LIB_DIR}/SFML
+	${LIB_DIR}/boost
+)
 
-include_directories(${SFML_INCLUDE_DIR})
+# Set source files
+set(SOURCE_FILES
+	# Components (interface & ui)
+	${SRC_DIR}/components/interface/point.cpp
+	${SRC_DIR}/components/interface/edge.cpp
+	${SRC_DIR}/components/interface/mpolygon.cpp
+	${SRC_DIR}/components/interface/guard.cpp
+	${SRC_DIR}/components/interface/team.cpp
+	${SRC_DIR}/components/interface/genetic_algorithm.cpp
+	${SRC_DIR}/components/ui/view.cpp
+	
+	# Application (main)
+	${SRC_DIR}/main.cpp
+)
 
-# Ignore BOOST deprecated headers
-add_definitions("-DBOOST_ALLOW_DEPRECATED_HEADERS")
-add_definitions("-DBOOST_BIND_GLOBAL_PLACEHOLDERS")
+# Create executable
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-# Ignore warnings
-add_definitions("-w")
-
-add_executable(artGallery ${SOURCE_FILES})
-target_link_libraries(artGallery PRIVATE -lsfml-graphics -lsfml-window -lsfml-system)
+# Link libraries to executable
+target_link_libraries(${PROJECT_NAME} PRIVATE
+	${Boost_LIBRARIES}
+	sfml-window
+	sfml-graphics
+	sfml-system
+)

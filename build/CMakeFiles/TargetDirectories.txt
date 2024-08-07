@@ -1,0 +1,3 @@
+/home/nikita/Desktop/AGP/build/CMakeFiles/AGP.dir
+/home/nikita/Desktop/AGP/build/CMakeFiles/edit_cache.dir
+/home/nikita/Desktop/AGP/build/CMakeFiles/rebuild_cache.dir
