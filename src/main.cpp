@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdio>
 #include <unistd.h>
 
 #include <AGP/components/ui/view.h>

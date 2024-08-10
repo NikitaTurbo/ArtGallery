@@ -8,12 +8,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <AGP/components/ui/view.h>
-#include <AGP/components/interface/edge.h>
-#include <AGP/components/interface/team.h>
-#include <AGP/components/interface/guard.h>
-#include <AGP/components/interface/point.h>
-#include <AGP/components/interface/mpolygon.h>
+#include "../ui/view.h"
+#include "edge.h"
+#include "team.h"
+#include "guard.h"
+#include "point.h"
+#include "mpolygon.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
 typedef boost::geometry::model::polygon<point_type> polygon_type;

@@ -8,11 +8,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <AGP/components/interface/edge.h>
-#include <AGP/components/interface/team.h>
-#include <AGP/components/interface/guard.h>
-#include <AGP/components/interface/point.h>
-#include <AGP/components/interface/mpolygon.h>
+#include "../interface/edge.h"
+#include "../interface/team.h"
+#include "../interface/guard.h"
+#include "../interface/point.h"
+#include "../interface/mpolygon.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
 typedef boost::geometry::model::polygon<point_type> polygon_type;
@@ -25,7 +25,7 @@ double draw_y(double y, long long width);
 
 class view {
 private:
-	sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(800, 800), "ArtGallery");
+	sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(800, 800), "AGP (Art Gallery Problem)");
 	std::vector<sf::CircleShape> points;
 	std::vector<sf::VertexArray> polygons;
 	sf::VertexArray room = sf::VertexArray(sf::LineStrip);

@@ -8,10 +8,10 @@
 
 #include <boost/geometry.hpp>
 
-#include <AGP/components/interface/edge.h>
-#include <AGP/components/interface/guard.h>
-#include <AGP/components/interface/point.h>
-#include <AGP/components/interface/mpolygon.h>
+#include "edge.h"
+#include "guard.h"
+#include "point.h"
+#include "mpolygon.h"
 
 typedef boost::geometry::model::d2::point_xy<double> point_type;
 typedef boost::geometry::model::polygon<point_type> polygon_type;
@@ -20,7 +20,7 @@ typedef boost::geometry::model::polygon<boost::geometry::model::d2::point_xy<dou
 class team {
 private:
   std::vector<guard> guards;
-  std::vector<polygon> visible_zones;  
+  std::vector<polygon> visible_zones;
 public:
   double fit;
   long long size;
