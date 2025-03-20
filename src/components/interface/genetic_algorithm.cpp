@@ -45,7 +45,7 @@ long long random_of_range(long long l, long long r) {
 	return l + (std::rand() % (r - l + 1));
 }
 
-population::population(long long n, long long m) : n(n), m(m) {
+population::population(long long m) : m(m) {
 	for (long long _i = 0; _i < m; ++_i) {
 		team t;
 		for (long long _j = 0; _j < random_of_range(gallery.size / 2, gallery.size); ++_j) {
@@ -58,7 +58,7 @@ population::population(long long n, long long m) : n(n), m(m) {
 }
 void population::update() {
 	std::sort(populate.begin(), populate.end(), [](team a, team b) {
-		if (a.fit == b.fit) return a.size > b.size;
+		if (a.fit == b.fit) return a.size < b.size;
 		return a.fit < b.fit;
 	});
 

@@ -1,3 +1,4 @@
+#include "boost/geometry/algorithms/detail/intersection/interface.hpp"
 #include <cmath>
 #include <string>
 #include <vector>
@@ -44,6 +45,7 @@ double mpolygon::area() {
 polygon mpolygon::polygon_area() {
 	polygon poly;
 	boost::geometry::read_wkt(to_polygon(), poly);
+
 	return poly;
 }
 edge mpolygon::get_edge(long long num) {
@@ -52,7 +54,17 @@ edge mpolygon::get_edge(long long num) {
 bool mpolygon::point_in(point p) {
 	point_type p2(p.x, p.y);
 	
-	return boost::geometry::covered_by(p2, polygon_area());
+	bool is_inside = boost::geometry::covered_by(p2, polygon_area());
+
+	if (!is_inside) {
+		for (long long i = 0; i < size; ++i) {
+			edge e = get_edge(i);
+			if (e.point_on(p)) {
+				return true;
+			}
+		}
+	}
+	return is_inside;
 }
 bool mpolygon::operator>(const mpolygon &pol2) const {
 	return sum > pol2.sum;

@@ -5,19 +5,25 @@ project(AGP) # Art Gallery Problem
 # Set project directories
 set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(INCLUDE_DIR ${PROJECT_ROOT}/include)
-set(LIB_DIR ${PROJECT_ROOT}/lib)
 set(SRC_DIR ${PROJECT_ROOT}/src)
+
+# SFML
+set(SFML_INCLUDE_DIR ${PROJECT_ROOT}/lib/SFML/include)
+set(SFML_LIB_DIR ${PROJECT_ROOT}/lib/SFML/lib)
+
+# boost
+set(BOOST_INCLUDE_DIR ${PROJECT_ROOT}/lib)
 
 # Include directories
 include_directories(
 	${INCLUDE_DIR}
-	${LIB_DIR}
+	${SFML_INCLUDE_DIR}
+	${BOOST_INCLUDE_DIR}
 )
 
 # Link directories
 link_directories(
-	${LIB_DIR}/SFML
-	${LIB_DIR}/boost
+	${SFML_LIB_DIR}
 )
 
 # Set source files

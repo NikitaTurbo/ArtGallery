@@ -41,13 +41,21 @@ guard::guard(double x, double y, long long stc) : x(x), y(y) {
 		long long ind_previous = (gallery.size - 1);
 		for (long long ind_now = 0; ind_now < gallery.size; ++ind_now) { // Find intersections from guard to all corners & all edges of polygon
 			edge now = edge(gallery[ind_previous], gallery[ind_now]);
-					
+	
 			if (visible.get_intersection(now)) {
 				point intersection = visible | now;
-
-				bool is_cross = !gallery.point_in(point(intersection.x + (corner.x - x) * 2e-2, intersection.y + (corner.y - y) * 2e-2)); // Check cross/touch point
 				
-				ray.push_back({intersection, is_cross});
+				bool is_cross = true; // Check cross/touch point
+				for (long long ind_intersection_corner = 0; ind_intersection_corner < gallery.size; ++ind_intersection_corner) {
+					if (intersection == gallery[ind_intersection_corner]) {
+						is_cross = false;
+						break;
+					}
+				}
+				
+				if (ray.empty() || ray.back().first != intersection) {
+					ray.push_back({intersection, is_cross});
+				}
 			}
 
 			ind_previous = ind_now;

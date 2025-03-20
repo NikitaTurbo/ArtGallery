@@ -13,7 +13,7 @@ point::point(double x, double y, double zero_x, double zero_y, long long f) : x(
 
 point point::operator~() {
 	x = round(x, 6);
-	y = round(y, 6);
+	y = round(y, 6);	
 	return (*this);
 }
 point point::real() const {

@@ -29,7 +29,7 @@ private:
 public:
 	long long n, m;
 
-	population(long long n, long long m);
+	population(long long m);
 	void update();
 	team get();
 };
